@@ -74,7 +74,7 @@ module LCD_display(status,freq,theta,power,CLK,slowCLK,
 	  row[3]="Phase:     0 deg";
 	  
   end
- 
+//changed design LCD files 
   parameter p1=63;
   parameter p2=32;
   parameter p3=47;
