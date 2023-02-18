@@ -75,6 +75,7 @@ module LCD_display(status,freq,theta,power,CLK,slowCLK,
 	  
   end
 //Kevin changed this line
+//chang by JACK
   parameter p1=63;
   parameter p2=32;
   parameter p3=47;
