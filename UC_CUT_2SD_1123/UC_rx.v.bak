@@ -1,0 +1,6 @@
+module UC_rx(clk,out,set);
+
+input clk;
+input set;
+output [3:0] out;
+

@@ -1,0 +1,394 @@
+//***********************************************//
+//   Display on an LCD (4 rows x 16 characters)  //
+
+module LCD_display(CLK, RESET, settings,LCM_RW,LCM_EN, LCM_RS, LCM_DATA,LCD_ON);
+
+  input  CLK;
+  input  RESET;
+  input  [10:0] settings;
+  output LCM_EN;
+  output LCM_RS;
+  output [7:0]  LCM_DATA;
+  output LCD_ON;
+  output LCM_RW;
+  
+  reg    [7:0]  LCM_DATA; 
+  reg    [5:0]  LCM_COUNT;
+  reg	 [15:1] DIVIDER;
+  reg    [7:0]  ROM_DATA0,ROM_DATA1,ROM_DATA2,ROM_DATA3;
+  reg    [4:0]  ADDRESS0,ADDRESS1,ADDRESS2,ADDRESS3;
+  reg    [4:0]  STATE;
+  reg    [1:0]  ENABLE;
+  wire   LCM_EN;
+  reg    LCM_RS;
+  //reg    LCM_RW;
+  wire	 LCM_CLK;
+  wire   LCD_ON;
+  reg    LCM_RW;
+  
+  
+  assign LCM_EN = ENABLE[0];
+  assign LCD_ON=1;
+ /************************
+ * Timie Base Generator	*
+ ************************/
+  
+  always @(negedge CLK)
+    if (!RESET) 
+      DIVIDER <= 15'o00000;
+    else
+	     DIVIDER <= DIVIDER + 1;
+ 
+  assign LCM_CLK = DIVIDER[15];	// 14MHz/2^16= 218 Hz
+
+//************************************//
+//    Set the characters to display   //
+  reg [127:0] row[3:0];
+  initial begin
+     row[0]="Chirp:  3~10 kHz";
+     row[1]="Power:   100   W";
+     row[2]="Ping Rate: 5  Hz";
+     row[3]="Duration : 20 ms";
+  end
+  //wire [10:0] settings=11'b001_011_011_01;
+  wire [2:0] sweep_range, duration, ping_rate;
+  wire [1:0] power;
+  assign sweep_range=settings[10:8];
+  assign duration=settings[7:5];
+  assign ping_rate=settings[4:2];
+  assign power=settings[1:0];
+  parameter p1=63;
+  parameter p2=32;
+  parameter p3=47;
+  parameter p4=24;
+  always @(posedge CLK) begin
+     case(sweep_range)
+	     3'b001: row[0][p1:p2]="3~10";
+		  3'b010: row[0][p1:p2]=" 3~7";
+		  3'b011: row[0][p1:p2]=" 4~8";
+	     3'b101: row[0][p1:p2]="10~3";
+		  3'b110: row[0][p1:p2]=" 7~3";
+		  3'b111: row[0][p1:p2]=" 8~4";
+		  default:row[0][p1:p2]="3~10";
+	  endcase
+  end
+  always @(posedge CLK) begin
+     case(power)
+	     2'b00:  row[1][p1:p2]=" 100";
+	  	  2'b01:  row[1][p1:p2]=" 150";
+		  2'b10:  row[1][p1:p2]=" 200";
+	     2'b11:  row[1][p1:p2]=" 250";
+		  default:row[1][p1:p2]=" 150";
+	  endcase
+  end
+  always @(posedge CLK) begin
+     case(ping_rate)
+	     3'b001: row[2][p3:p4]="  5";
+	  	  3'b010: row[2][p3:p4]="  2";
+		  3'b011: row[2][p3:p4]="  1";
+	     3'b100: row[2][p3:p4]="0.5";
+		  3'b101: row[2][p3:p4]="0.2";
+		  default:row[2][p3:p4]="  1";
+	  endcase
+  end	
+  always @(posedge CLK) begin
+     case(duration)
+	    3'b001: row[3][p3:p4]=" 10";
+	    3'b010: row[3][p3:p4]=" 20";
+		 3'b011: row[3][p3:p4]=" 50";
+	    3'b100: row[3][p3:p4]=" 70";
+		 3'b101: row[3][p3:p4]="100";
+		 3'b110: row[3][p3:p4]="200";
+		 default:row[3][p3:p4]=" 50";
+	  endcase
+  end	
+
+  always @(ADDRESS0) begin
+      case(ADDRESS0)
+        4'h0   : ROM_DATA0 = row[0][127:120];
+        4'h1   : ROM_DATA0 = row[0][119:112];
+        4'h2   : ROM_DATA0 = row[0][111:104];
+        4'h3   : ROM_DATA0 = row[0][103:96];
+        4'h4   : ROM_DATA0 = row[0][95:88];
+        4'h5   : ROM_DATA0 = row[0][87:80];
+        4'h6   : ROM_DATA0 = row[0][79:72];
+        4'h7   : ROM_DATA0 = row[0][71:64];
+        4'h8   : ROM_DATA0 = row[0][63:56];
+        4'h9   : ROM_DATA0 = row[0][55:48];
+        4'hA   : ROM_DATA0 = row[0][47:40];
+        4'hB   : ROM_DATA0 = row[0][39:32];
+        4'hC   : ROM_DATA0 = row[0][31:24];
+        4'hD   : ROM_DATA0 = row[0][23:16];
+        4'hE   : ROM_DATA0 = row[0][15:8];
+		  4'hF   : ROM_DATA0 = row[0][7:0];
+      endcase
+  end 
+    
+  always @(ADDRESS1) begin
+      case(ADDRESS1)
+        4'h0   : ROM_DATA1 = row[1][127:120];
+        4'h1   : ROM_DATA1 = row[1][119:112];
+        4'h2   : ROM_DATA1 = row[1][111:104];
+        4'h3   : ROM_DATA1 = row[1][103:96];
+        4'h4   : ROM_DATA1 = row[1][95:88];
+        4'h5   : ROM_DATA1 = row[1][87:80];
+        4'h6   : ROM_DATA1 = row[1][79:72];
+        4'h7   : ROM_DATA1 = row[1][71:64];
+        4'h8   : ROM_DATA1 = row[1][63:56];
+        4'h9   : ROM_DATA1 = row[1][55:48];
+        4'hA   : ROM_DATA1 = row[1][47:40];
+        4'hB   : ROM_DATA1 = row[1][39:32];
+        4'hC   : ROM_DATA1 = row[1][31:24];
+        4'hD   : ROM_DATA1 = row[1][23:16];
+        4'hE   : ROM_DATA1 = row[1][15:8];
+		  4'hF   : ROM_DATA1 = row[1][7:0];
+      endcase
+  end 
+  always @(ADDRESS2) begin
+      case(ADDRESS2)
+        4'h0   : ROM_DATA2 = row[2][127:120];
+        4'h1   : ROM_DATA2 = row[2][119:112];
+        4'h2   : ROM_DATA2 = row[2][111:104];
+        4'h3   : ROM_DATA2 = row[2][103:96];
+        4'h4   : ROM_DATA2 = row[2][95:88];
+        4'h5   : ROM_DATA2 = row[2][87:80];
+        4'h6   : ROM_DATA2 = row[2][79:72];
+        4'h7   : ROM_DATA2 = row[2][71:64];
+        4'h8   : ROM_DATA2 = row[2][63:56];
+        4'h9   : ROM_DATA2 = row[2][55:48];
+        4'hA   : ROM_DATA2 = row[2][47:40];
+        4'hB   : ROM_DATA2 = row[2][39:32];
+        4'hC   : ROM_DATA2 = row[2][31:24];
+        4'hD   : ROM_DATA2 = row[2][23:16];
+        4'hE   : ROM_DATA2 = row[2][15:8];
+		  4'hF   : ROM_DATA2 = row[2][7:0];
+      endcase
+  end 
+  always @(ADDRESS3) begin
+      case(ADDRESS3)
+        4'h0   : ROM_DATA3 = row[3][127:120];
+        4'h1   : ROM_DATA3 = row[3][119:112];
+        4'h2   : ROM_DATA3 = row[3][111:104];
+        4'h3   : ROM_DATA3 = row[3][103:96];
+        4'h4   : ROM_DATA3 = row[3][95:88];
+        4'h5   : ROM_DATA3 = row[3][87:80];
+        4'h6   : ROM_DATA3 = row[3][79:72];
+        4'h7   : ROM_DATA3 = row[3][71:64];
+        4'h8   : ROM_DATA3 = row[3][63:56];
+        4'h9   : ROM_DATA3 = row[3][55:48];
+        4'hA   : ROM_DATA3 = row[3][47:40];
+        4'hB   : ROM_DATA3 = row[3][39:32];
+        4'hC   : ROM_DATA3 = row[3][31:24];
+        4'hD   : ROM_DATA3 = row[3][23:16];
+        4'hE   : ROM_DATA3 = row[3][15:8];
+		  4'hF   : ROM_DATA3 = row[3][7:0];
+      endcase
+  end 
+     
+
+/******************************
+ * Initial And Write LCM Data *
+ ******************************/
+
+  always @(posedge LCM_CLK)   // 14MHz/2^16= 218 Hz
+    begin
+      if (!RESET)
+		  	  	begin
+          STATE    = 5'd0;   
+          ENABLE  <= 2'b00;
+          //LCM_RW  <= 1'b0;
+          LCM_RS  <= 1'b0;
+          LCM_DATA<= 8'h38;
+			  	  end
+      else
+        if (ENABLE < 2'b10)      // count 0 1 2 0 1 2 0 1 2..., where at 1, E=1; at 0, data update. 
+           ENABLE <= ENABLE + 1;  
+        else if (STATE == 5'd0)  //idle 1
+           begin
+             STATE  = 5'd1;
+             ENABLE<= 2'b00;
+           end  
+        else if (STATE == 5'd1)  //idle 2
+            begin
+              STATE  = 5'd21;
+              ENABLE<= 2'b00;
+            end
+        else if (STATE == 5'd21) //idle 3
+            begin
+              STATE  = 5'd2;
+              ENABLE<= 2'b00;
+            end
+        else if (STATE == 5'd2)  //idle 4
+           begin
+             STATE  = 5'd3;
+             ENABLE<= 2'b00;
+           end  
+        else if (STATE == 5'd3)  //idle 5
+           begin
+             STATE  = 5'd4;
+             ENABLE<= 2'b00;
+           end  
+        else if (STATE == 5'd4)  //idle 6
+           begin
+             STATE  = 5'd5;
+             ENABLE<= 2'b00;
+           end
+        else if (STATE == 5'd5)  //idle 7, totally 7*3/218Hz=98 ms
+           begin
+             STATE  = 5'd6;     
+             ENABLE<= 2'b00;
+           end     
+        
+        else if (STATE == 5'd6) 
+            begin
+              STATE    = 5'd7;
+              LCM_DATA<= 8'h38;  //configuration 1 (8 Bit,2 Lines)
+              ENABLE  <= 2'b00;
+            end
+        else if (STATE == 5'd7) 
+            begin
+              STATE    = 5'd8;
+              LCM_DATA<= 8'h38;  //configuration 2 (8 Bit,2 Lines)
+              ENABLE  <= 2'b00;
+            end
+        else if (STATE == 5'd8) 
+            begin
+              STATE    = 5'd9;
+              LCM_DATA<= 8'h38;  //configuration 3 (8 Bit,2 Lines)
+              ENABLE  <= 2'b00;
+            end         
+        else if (STATE == 5'd9) 
+            begin
+              STATE    = 5'd10;
+              LCM_DATA<= 8'h01;  //clear
+              ENABLE  <= 2'b00;
+            end  
+        else if (STATE == 5'd10) 
+            begin
+              STATE    = 5'd11;
+              LCM_DATA<= 8'h06;  //Entry mode, increase address by 1
+              ENABLE  <= 2'b00;  
+            end
+        else if (STATE == 5'd11) 
+           begin
+             STATE    = 5'd12;
+             LCM_DATA<= 8'h0C;   //Display on
+             ENABLE  <= 2'b00; 
+           end  
+        else if (STATE == 5'd12) 
+           begin
+             STATE    <= 5'd13;
+             LCM_RS   <= 1'b0;
+             LCM_DATA<= 8'h80;  //Row no. 1;
+             ENABLE  <= 2'b00; 
+           end  
+        else if (STATE == 5'd13) 
+           begin  
+             LCM_RS   <= 1'b1;   // Display on the 1st row
+             if (ADDRESS0 < 15) begin
+					 ADDRESS0 <= ADDRESS0 + 1;
+					 ENABLE <= 2'b00; end 
+             else begin
+					 STATE	<=5'd14;
+					 ENABLE <= 2'b00;
+					 ADDRESS0  <= 4'h0;
+				 end
+			    LCM_DATA = ROM_DATA0;
+           end
+            
+         else if (STATE == 5'd14) 
+           begin
+             STATE    <= 5'd15;
+             LCM_RS   <= 1'b0;
+             LCM_DATA <=8'hc0; //Row no. 2; 
+             ENABLE  <= 2'b00;
+           end
+			else if (STATE == 5'd15) 
+           begin  
+             LCM_RS   <= 1'b1;   // Display on the 2nd row
+             if (ADDRESS1 < 15) begin
+					 ADDRESS1 <= ADDRESS1 + 1;
+					 ENABLE <= 2'b00; end 
+             else begin
+					 STATE	<=5'd16;
+					 ENABLE <= 2'b00;
+					 ADDRESS1 <= 4'h0;
+				 end
+			    LCM_DATA = ROM_DATA1;
+           end  
+        else if (STATE == 5'd16) 
+           begin
+             STATE    <= 5'd17;
+             LCM_RS   <= 1'b0;
+             LCM_DATA<= 8'h90;   // Row no. 3; 
+             ENABLE  <= 2'b00; 
+           end  
+		  
+         else if (STATE == 5'd17) 
+           begin  
+             LCM_RS   <= 1'b1;    // Display on the 3rd row
+             
+             if (ADDRESS2 < 15) begin
+                 ADDRESS2 <= ADDRESS2 + 1;
+                 ENABLE <= 2'b00; end 
+             else begin
+					 STATE	<=5'd18;
+					 ENABLE <= 2'b00;
+					 ADDRESS2 = 4'h0;     
+				 end
+			    LCM_DATA = ROM_DATA2;
+           end
+		   else if (STATE == 5'd18) 
+           begin
+             STATE    <= 5'd19;
+             LCM_RS   <= 1'b0;
+             LCM_DATA<= 8'hd0;   // Row no. 4; 
+             ENABLE  <= 2'b00; 
+           end  
+		  
+         else if (STATE == 5'd19) 
+           begin  
+             LCM_RS   <= 1'b1;    // Display on the 4th row  
+             if (ADDRESS3 < 15) begin
+                 ADDRESS3 <= ADDRESS3 + 1;
+                 ENABLE <= 2'b00; end 
+             else begin
+					 STATE	<=5'd12;
+					 ENABLE <= 2'b00;
+					 ADDRESS3 <= 4'h0;     
+				 end
+			    LCM_DATA = ROM_DATA3;
+           end
+
+        else if (STATE == 5'd20) 
+           begin
+             STATE    = 5'd21;
+             LCM_RS   = 1'b0;
+             LCM_DATA<= 8'b100000000; // Row no. 1
+             ENABLE  <= 2'b00; 
+           end  
+        else if (STATE == 5'd21) 
+           begin  
+             LCM_RS   = 1'b1;  // Display on the 1st row
+             
+             if (ADDRESS0 < 15)
+                begin
+					ADDRESS0 <= ADDRESS0 + 1;
+					ENABLE <= 2'b00;
+                end
+             else
+				begin
+					STATE	=5'd0;
+					ENABLE <= 2'b00;
+					ADDRESS0  = 4'h0;
+				end
+			 LCM_DATA = ROM_DATA0;
+           end
+
+    end
+ 
+ 
+	
+	 
+	
+endmodule	

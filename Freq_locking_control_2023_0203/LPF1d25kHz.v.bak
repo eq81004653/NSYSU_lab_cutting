@@ -1,0 +1,30 @@
+//---------------------1.25kHz Lowpass Filter------------------//
+//                       z + 1                                 //
+//                     ---------  , fs=60kHz                   //
+//                     16 z - 14                               //
+
+module LPF1d25kHz(out,in,clk60kHz); 
+wire signed [7:0] out;
+assign out=out16[11:4];
+reg signed [11:0] out16;     // out16 = 16*theta
+reg signed [7:0] phase_1;    // phase_1=phase(k-1)
+wire signed [10:0] temp_sum;
+assign temp_sum={{3{phase[7]}},phase}+{{3{phase_1[7]}},phase_1}+
+       {theta8[10],theta8[10:1]}+{{2{theta8[10]}},theta8[10:2]};
+always @(posedge pulse20kHz_d) begin
+	 theta8 <= temp_sum;
+	 phase_1 <= phase;
+end
+
+
+wire signed [7:0] theta_f;
+assign theta_f=theta8[10:3];
+reg signed [10:0] theta8;    // theta8=8*theta
+reg signed [7:0] phase_1;    // phase_1=phase(k-1)
+wire signed [10:0] temp_sum;
+assign temp_sum={{3{phase[7]}},phase}+{{3{phase_1[7]}},phase_1}+
+       {theta8[10],theta8[10:1]}+{{2{theta8[10]}},theta8[10:2]};
+always @(posedge pulse20kHz_d) begin
+	 theta8 <= temp_sum;
+	 phase_1 <= phase;
+end

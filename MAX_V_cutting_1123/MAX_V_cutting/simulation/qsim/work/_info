@@ -1,0 +1,57 @@
+m255
+K4
+z2
+!s11f vlog 2020.1 2020.02, Feb 28 2020
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+dC:/Users/Richerl/Downloads/NSYSU lab cutting/secondary/one CPLD/MAX_V_cutting_1016/MAX_V_cutting/simulation/qsim
+vcutting_top
+Z0 !s110 1669706050
+!i10b 1
+!s100 Xj=RBW<L5UbB@C@P[2_?b3
+Z1 !s11b Dg1SIo80bB@j0V0VzS_@n1
+I8P<8cb_oDDJomeA;?2l1;2
+Z2 VDg1SIo80bB@j0V0VzS_@n1
+Z3 dC:/NSTYSU/NSYSU lab cutting/secondary/one CPLD/MAX_V_cutting_1123/MAX_V_cutting/simulation/qsim
+w1669706049
+8cutting_top.vo
+Fcutting_top.vo
+!i122 76
+L0 32 8854
+Z4 OV;L;2020.1;71
+r1
+!s85 0
+31
+Z5 !s108 1669706050.000000
+!s107 cutting_top.vo|
+!s90 -work|work|cutting_top.vo|
+!i113 1
+Z6 o-work work
+Z7 tCvgOpt 0
+vcutting_top_vlg_vec_tst
+R0
+!i10b 1
+!s100 1^HeO`ZnJN@nb@PEQo7o42
+R1
+IMU>hTENZMg2Zm86J^PZOn3
+R2
+R3
+w1669706048
+8Waveform3.vwf.vt
+FWaveform3.vwf.vt
+!i122 77
+L0 30 88
+R4
+r1
+!s85 0
+31
+R5
+!s107 Waveform3.vwf.vt|
+!s90 -work|work|Waveform3.vwf.vt|
+!i113 1
+R6
+R7

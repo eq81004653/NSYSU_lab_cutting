@@ -1,0 +1,53 @@
+// To detect the phase bwteen the binary waveforms Is and Vs
+// Output: theta is the phase difference between Is & Vs, ranging 
+// roughly from -151 to 151, with 151 corresponding to 180 degree,
+// in assuming driving frequecy 83kHz, 12500kHz/83kHz=151. 
+
+module phase_estimator(theta,pulse83kHz,Is,Vs,clk12d5MHz);
+input clk12d5MHz;
+input Is, Vs;
+output signed [8:0] theta;
+output pulse83kHz;
+
+// Determine whether I leads V (theta>0, sign_bit=0) or not (theta<0, sign_bit=1)
+reg sign_bit;
+always @(negedge Vs) sign_bit<=Is;
+// Determine the phase difference
+wire XOR_IV;
+assign XOR_IV=Is^Vs;
+reg [7:0] accum=8'b0;
+wire [7:0] sum;
+assign sum = accum+XOR_IV;
+reg signed [8:0] theta;
+reg [7:0] count;
+wire [7:0] sum0;
+assign sum0=count+1;
+reg rst, pulse83kHz;
+always @(negedge clk12d5MHz) begin
+        rst<=&{sum0[7],~sum0[6:5],sum0[4],~sum0[3],sum0[2:0]}; //'10010111' (151)
+		  pulse83kHz<=rst;
+end
+		  
+always @(posedge clk12d5MHz) begin
+	if (rst) begin   // Reset for every 156 cycles, about a period of a 80kHz signal 
+	   count <= 8'b0;
+		accum <= 8'b0;
+		theta <=sign_bit?{1'b1,~(sum-1)}:{1'b0,sum}; 
+   end 
+	else	begin	
+	   count <= sum0;
+	   accum <= sum;
+	end
+end
+
+endmodule  
+	  
+      
+	  
+	  
+	  
+
+
+		  
+	
+	

@@ -1,0 +1,117 @@
+module tunable_delay(r,Is,locked,theta4, phase, pulse20kHz, pulse1kHz,standby);
+output r,locked;
+output signed [9:0] theta4;
+input signed [7:0] phase;
+input Is, pulse20kHz, pulse1kHz,standby;
+
+//---------1kHz Lowpass Filter (z+1)/(8z-6),at the sample frequency 20kHz ---------//
+reg signed [10:0] theta8;    // theta8=8*theta
+reg signed [7:0] phase_1;    // phase_1=phase(k-1)
+wire signed [10:0] temp_sum;
+assign temp_sum={{3{phase[7]}},phase}+{{3{phase_1[7]}},phase_1}+
+       {theta8[10],theta8[10:1]}+{{2{theta8[10]}},theta8[10:2]};
+always @(posedge pulse20kHz) begin
+	 theta8 <= temp_sum;
+	 phase_1 <= phase;
+end
+
+//---------------Digital delay line for the bianry injection signal-----------//
+//   Tunable delay range:  u = [225 239 255];                                 //
+//                         u/10e6*20e3 = [0.45 0.478 0.51] period of delay    //
+reg [255:0] Is_delay;   // save Is on registers
+wire [7:0] next;  		// next time index
+assign next=now+1;
+reg [7:0] now;    		// current time index
+always @(posedge clk10MHz) begin
+   Is_delay[now]<=Is;
+	now<=next;
+end
+
+//-------------Tune the delay to make phase roughly equal to zero-------------//
+wire signed [10:0] phase_set_point; 
+assign theta8_set_point=11'b0;   	    //11'b00001100000; //12*8, 28 deg;
+wire signed [10:0] err8;
+assign err8=-theta8_set_point+theta8;
+wire signed  [10:0] diff;
+assign diff=theta8+11'b11110000000;  //8*(theta-16)
+wire higher_than_45deg;
+assign higher_than_45deg=~diff[10];
+reg [4:0] u=5'b0;
+always @(posedge pulse1kHz) begin
+          u<=higher_than_45deg? (u+1)
+
+reg [7:0] u=8'b11101000;//8'b0;//00100000; // u = number of delay in unit of 0.02 us
+always @(posedge standby) u<=u+8'b000000001;
+// u<=8'b11101110;  // for driving at the anti-resoance point 
+
+reg [7:0] index;
+always @(posedge cycle) index<=now-u;
+reg r;
+always @(negedge clk50MHz) begin
+      r<= Is_delay[index];
+		n<=5'b10101;//21;  20.1kHz
+end
+
+
+
+
+
+//---------2kHz Lowpass Filter (2z+2)/(8z-4), fs=20kHz ---------//
+//wire signed [10:0] temp_sum;
+//assign temp_sum={{2{phase[7]}},phase,1'b0}+{{2{phase_1[7]}},phase_1,1'b0}+
+//                {theta8[10],theta8[10:1]};
+//reg signed [10:0] theta8;
+//reg signed [7:0] phase_1;
+
+//always @(negedge pulse20kHz) begin
+//	 theta8 <= temp_sum;
+//	 phase_1 <= phase;
+//end
+//wire signed [9:0] theta4;    // theta4=4*theta
+//assign theta4=theta8[10:1];
+
+//------- Anti-Resonant Frequency Tracking Control at the sample frequency 1kHz --------//
+wire signed [10:0] phase_set_point; 
+assign theta8_set_point=11'b00010000000;///11'b00001100000; //12*8, 28 deg;//11'b00001100000; //12*8, 34 deg//11'b00010000000;//16*8,45deg;11'b00001100000; //12*8, 34 deg
+//11'b00001000000; //8*8, 28 deg;//11'b00001110000;//14*8,39 deg;//11'b00010000000;//16*8,45deg;
+wire signed [10:0] err8;
+assign err8=-theta8_set_point+theta8;
+//parameter initial_value={14'b01100111111000,11'b0};//19.78kHz;//{15'b011010001011000,11'b0};//19.98kHz//{14'b01101010000110,11'b0}; // initial value=6790, corresponding to 20.235kHz;
+parameter initial_value={14'b01101010101110,12'b0};//6830*2,corresponding to 20.355kHz; //{15'b011010100111000,11'b0}; // initial value=6812*2;{15'b011010011111000,11'b0};//6780*2////6790*2, corresponding to 20.235kHz;
+//parameter upper_bound =15'b011010100001100; // upper bound=6790*2, corresponding to 20.235kHz; 
+parameter lower_bound=   15'b011001111110000; 	 // lower bound=6648, corresponding to 19.78kHz;   
+wire signed [14:0] out_of_bound;
+//assign out_of_bound=-uI2048[25:11]+upper_bound;
+assign out_of_bound=uI2048[25:11]-lower_bound;
+reg signed [25:0] uI2048=initial_value;
+reg [7:0] abs_err;
+//reg [7:0] transient_count=8'b0;
+//wire reset;
+//assign reset=(~transient_count[6]|out_of_bound[14]);
+wire signed [10:0] diff30, diff16;
+assign diff30=theta8+11'b11100010000;  //8*(theta-30)
+assign diff16=theta8+11'b11110000000;  //8*(theta-16)
+reg [6:0] count0=7'b0;
+always @(posedge pulse4kHz) begin
+
+     //-{{17{err8[10]}},err8[10:2]});//-{{17{err8[10]}},err8[10:2]}-{{18{err8[10]}},err8[10:3]});//out_of_bound[14]?initial_value:(uI2048-{{17{err8[10]}},err8[10:2]}-{{18{err8[10]}},err8[10:3]});//-{{16{err8[10]}},err8[10:1]});//-{{17{err8[10]}},err8[10:2]}-{{18{err8[10]}},err8[10:3]});//-{{16{err8[10]}},err8[10:1]});//reset? initial_value:(uI2048-{{16{err8[10]}},err8[10:1]});//(uI2048-{{15{err8[10]}},err8}); // I control
+   //if (transient_count[7]==1) begin
+	  abs_err <= err8[10]? (1+~err8[10:3]):err8[10:3];
+	  if (standby==1)              uI2048 <= initial_value; 
+	  else if (diff30[10]==0) 		 uI2048 <= (uI2048-{{15{err8[10]}},err8});  			// kI=1   when theta>30
+	     else if (diff16[10]==0)   uI2048 <= (uI2048-{{18{err8[10]}},err8[10:3]});  	// kI=1/8 when 30>theta>16
+		     else   	  				 uI2048 <= (uI2048-{{20{err8[10]}},err8[10:5]});  	// kI=1/32 otherwise
+	//end
+end 
+wire signed [25:0] u2048;
+assign u2048= uI2048-{{11{err8[10]}},err8,4'b0}-{{13{err8[10]}},err8,2'b0};//-{{12{err8[10]}},err8,3'b0};	//  PI control
+reg [17:0] increment;
+reg locked=1'b0;
+always @(negedge pulse4kHz) begin
+   //transient_count<=transient_count[7]? transient_count:(transient_count+1);
+	 increment <= u2048[25:8];// u2048[24:11]; 8=11-3, 3 more digits included to enhance the accuracy.
+    locked <= standby? 1'b0:(abs_err<12);   // locked=1 when the absolute phase error is less than 12(33 degrees). 
+    
+end
+
+endmodule

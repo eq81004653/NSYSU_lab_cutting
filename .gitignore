@@ -1,0 +1,14 @@
+*.rpt
+*.map
+*.done
+*.smsg
+*.jdi
+*.summary
+*.sld
+*.pin
+/src/simulation
+/src/.qsys_edit
+/src/Block Design
+/src/db/
+/src/greybox_tmp
+/src/incremental_db

@@ -1,0 +1,233 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "alarm_low",
+					"strict" : false
+				},
+				{
+					"name" : "locked_low",
+					"strict" : false
+				},
+				{
+					"name" : "test_n",
+					"strict" : false
+				},
+				{
+					"name" : "test_p",
+					"strict" : false
+				},
+				{
+					"name" : "LED[4]",
+					"strict" : false
+				},
+				{
+					"name" : "LED[5]",
+					"strict" : false
+				},
+				{
+					"name" : "LED[6]",
+					"strict" : false
+				},
+				{
+					"name" : "Gate_Ap",
+					"strict" : false
+				},
+				{
+					"name" : "Gate_An",
+					"strict" : false
+				},
+				{
+					"name" : "Gate_Bp",
+					"strict" : false
+				},
+				{
+					"name" : "Gate_Bn",
+					"strict" : false
+				},
+				{
+					"name" : "CS2",
+					"strict" : false
+				},
+				{
+					"name" : "SCLK2",
+					"strict" : false
+				},
+				{
+					"name" : "DIN2",
+					"strict" : false
+				},
+				{
+					"name" : "RS",
+					"strict" : false
+				},
+				{
+					"name" : "E",
+					"strict" : false
+				},
+				{
+					"name" : "D[0]",
+					"strict" : false
+				},
+				{
+					"name" : "D[1]",
+					"strict" : false
+				},
+				{
+					"name" : "D[2]",
+					"strict" : false
+				},
+				{
+					"name" : "D[3]",
+					"strict" : false
+				},
+				{
+					"name" : "D[4]",
+					"strict" : false
+				},
+				{
+					"name" : "D[5]",
+					"strict" : false
+				},
+				{
+					"name" : "D[6]",
+					"strict" : false
+				},
+				{
+					"name" : "D[7]",
+					"strict" : false
+				},
+				{
+					"name" : "LCD_csn",
+					"strict" : false
+				},
+				{
+					"name" : "LCD_clk",
+					"strict" : false
+				},
+				{
+					"name" : "TX_data_MAX[0]",
+					"strict" : false
+				},
+				{
+					"name" : "TX_data_MAX[1]",
+					"strict" : false
+				},
+				{
+					"name" : "TX_data_MAX[2]",
+					"strict" : false
+				},
+				{
+					"name" : "TX_data_MAX[3]",
+					"strict" : false
+				},
+				{
+					"name" : "TX_data_MAX[4]",
+					"strict" : false
+				},
+				{
+					"name" : "TX_data_MAX[5]",
+					"strict" : false
+				},
+				{
+					"name" : "TX_data_MAX[6]",
+					"strict" : false
+				},
+				{
+					"name" : "TX_data_MAX[7]",
+					"strict" : false
+				},
+				{
+					"name" : "TX_data_MAX[8]",
+					"strict" : false
+				},
+				{
+					"name" : "TX_data_MAX[9]",
+					"strict" : false
+				},
+				{
+					"name" : "TX_data_MAX[10]",
+					"strict" : false
+				},
+				{
+					"name" : "TX_data_MAX[11]",
+					"strict" : false
+				},
+				{
+					"name" : "TX_data_MAX[12]",
+					"strict" : false
+				},
+				{
+					"name" : "max_channal[0]",
+					"strict" : false
+				},
+				{
+					"name" : "max_channal[1]",
+					"strict" : false
+				},
+				{
+					"name" : "max_channal[2]",
+					"strict" : false
+				},
+				{
+					"name" : "max_channal[3]",
+					"strict" : false
+				},
+				{
+					"name" : "max_channal[4]",
+					"strict" : false
+				},
+				{
+					"name" : "max_channal[5]",
+					"strict" : false
+				},
+				{
+					"name" : "LCD_out0",
+					"strict" : false
+				},
+				{
+					"name" : "LCD_out1",
+					"strict" : false
+				},
+				{
+					"name" : "Vq",
+					"strict" : false
+				},
+				{
+					"name" : "clk50MHz",
+					"strict" : false
+				},
+				{
+					"name" : "SW",
+					"strict" : false
+				},
+				{
+					"name" : "Iq",
+					"strict" : false
+				},
+				{
+					"name" : "DOUT2",
+					"strict" : false
+				},
+				{
+					"name" : "altera_reserved_tms",
+					"strict" : false
+				},
+				{
+					"name" : "altera_reserved_tck",
+					"strict" : false
+				},
+				{
+					"name" : "altera_reserved_tdi",
+					"strict" : false
+				},
+				{
+					"name" : "altera_reserved_tdo",
+					"strict" : false
+				}
+			]
+		}
+	]
+}

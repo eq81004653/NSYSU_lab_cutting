@@ -1,0 +1,69 @@
+
+State Machine - |relay_feedback_osc|freq_cho
+Name freq_cho.1101 freq_cho.1100 freq_cho.1011 freq_cho.1010 freq_cho.1001 freq_cho.1000 freq_cho.0111 freq_cho.0110 freq_cho.0101 freq_cho.0011 freq_cho.0000 
+freq_cho.0000 0 0 0 0 0 0 0 0 0 0 0 
+freq_cho.0011 0 0 0 0 0 0 0 0 0 1 1 
+freq_cho.0101 0 0 0 0 0 0 0 0 1 0 1 
+freq_cho.0110 0 0 0 0 0 0 0 1 0 0 1 
+freq_cho.0111 0 0 0 0 0 0 1 0 0 0 1 
+freq_cho.1000 0 0 0 0 0 1 0 0 0 0 1 
+freq_cho.1001 0 0 0 0 1 0 0 0 0 0 1 
+freq_cho.1010 0 0 0 1 0 0 0 0 0 0 1 
+freq_cho.1011 0 0 1 0 0 0 0 0 0 0 1 
+freq_cho.1100 0 1 0 0 0 0 0 0 0 0 1 
+freq_cho.1101 1 0 0 0 0 0 0 0 0 0 1 
+
+State Machine - |relay_feedback_osc|LCD:LCD1|state
+Name state.0000 
+state.0001 0 
+state.0000 1 
+
+State Machine - |relay_feedback_osc|LCD:LCD1|SWEEP_choice
+Name SWEEP_choice.01 
+SWEEP_choice.00 0 
+SWEEP_choice.01 1 
+
+State Machine - |relay_feedback_osc|LCD:LCD1|RUN_choice
+Name RUN_choice.00 
+RUN_choice.01 0 
+RUN_choice.00 1 
+
+State Machine - |relay_feedback_osc|LCD:LCD1|choice
+Name choice.1011 choice.1010 choice.1001 choice.1000 choice.0111 choice.0110 choice.0101 choice.0100 choice.0011 choice.0010 choice.0001 choice.0000 
+choice.0000 0 0 0 0 0 0 0 0 0 0 0 0 
+choice.0001 0 0 0 0 0 0 0 0 0 0 1 1 
+choice.0010 0 0 0 0 0 0 0 0 0 1 0 1 
+choice.0011 0 0 0 0 0 0 0 0 1 0 0 1 
+choice.0100 0 0 0 0 0 0 0 1 0 0 0 1 
+choice.0101 0 0 0 0 0 0 1 0 0 0 0 1 
+choice.0110 0 0 0 0 0 1 0 0 0 0 0 1 
+choice.0111 0 0 0 0 1 0 0 0 0 0 0 1 
+choice.1000 0 0 0 1 0 0 0 0 0 0 0 1 
+choice.1001 0 0 1 0 0 0 0 0 0 0 0 1 
+choice.1010 0 1 0 0 0 0 0 0 0 0 0 1 
+choice.1011 1 0 0 0 0 0 0 0 0 0 0 1 
+
+State Machine - |relay_feedback_osc|LCD_display:U9|STATE
+Name STATE.10101 STATE.10100 STATE.10011 STATE.10010 STATE.10001 STATE.10000 STATE.01111 STATE.01110 STATE.01101 STATE.01100 STATE.01011 STATE.01010 STATE.01001 STATE.01000 STATE.00111 STATE.00110 STATE.00101 STATE.00100 STATE.00011 STATE.00010 STATE.00001 STATE.00000 
+STATE.00000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+STATE.00001 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 
+STATE.00010 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 
+STATE.00011 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 
+STATE.00100 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 
+STATE.00101 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 
+STATE.00110 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 
+STATE.00111 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 
+STATE.01000 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 
+STATE.01001 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 
+STATE.01010 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 
+STATE.01011 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 
+STATE.01100 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 
+STATE.01101 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 
+STATE.01110 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+STATE.01111 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+STATE.10000 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+STATE.10001 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+STATE.10010 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+STATE.10011 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+STATE.10100 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+STATE.10101 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 

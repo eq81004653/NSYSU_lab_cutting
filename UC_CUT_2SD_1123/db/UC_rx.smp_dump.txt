@@ -1,0 +1,7 @@
+
+State Machine - |UC_rx|RX_state
+Name RX_state.11 RX_state.10 RX_state.01 RX_state.00 
+RX_state.00 0 0 0 0 
+RX_state.01 0 0 1 1 
+RX_state.10 0 1 0 1 
+RX_state.11 1 0 0 1 

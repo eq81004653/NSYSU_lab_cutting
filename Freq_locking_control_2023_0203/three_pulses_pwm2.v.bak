@@ -1,0 +1,88 @@
+//   Three-Pulse PWM with its frequency determined by increment,  //
+//   and its modulation index determined by in.                   //
+//                                                                //
+//         frequency = increment*(100e6)/(2^27*4)  Hz             //
+//         [example] increment='011010001101110000' (6711*16)     //
+//                   corresponds to 20kHz.                        //
+module three_pulses_pwm2(pwm_drive,increment,in,clk100MHz);
+output [1:0] pwm_drive;
+input [17:0] increment;
+input [7:0] in;
+input clk100MHz;
+//------------------------------------------------------------------------//
+// A counter counts up and down, 0<=count<=2^27; with an increment        //
+// to create a triangular wave. two triangles form a period, one          //
+// positive cycle and one negative scycle.                                //
+//         triangle=count/2^13 swings between 0 and 2^14                  // 
+
+wire [14:0] triangle;
+assign triangle=count[27:13]; 
+reg [27:0] count=28'b0;
+reg [1:0] status=2'b0; 
+wire positive_cycle, down; //	status={positive_cycle, down};
+assign positive_cycle=status[1];
+assign down=status[0];
+
+wire [27:0] delta;
+assign delta={10'b0,increment};	
+wire [27:0] count_minus_delta, count_plus_delta;
+assign count_minus_delta=count-delta;
+assign count_plus_delta=count+delta;
+reg [27:0] sum;
+always @(negedge clk100MHz) begin
+  sum <= down? count_minus_delta : count_plus_delta;
+end
+
+wire [27:0] count_temp;
+assign count_temp=sum[27]? ~(sum-1):sum;
+wire [1:0] status_temp;
+assign status_temp=sum[27]? (status+1):status;
+
+always @(posedge clk100MHz) begin
+    count <= count_temp;
+	 status <= status_temp;
+end
+
+reg signed [14:0] diff1,diff2, diff3;
+always @(negedge clk100MHz) begin
+   diff1<=xx1-triangle;
+   diff2<=triangle-xx2;
+   diff3<=xx3-triangle;
+end
+
+//---------------------- Three-Pulse PWM -----------------------//
+//    The modulation index determined by input 0<=in<=200       //
+//    The lower in, the higher the modulation index.            //
+
+parameter word_length=8, table_size=201;
+reg [word_length-1:0] x2[table_size-1:0];
+reg [word_length-1:0] x3[table_size-1:0];
+initial $readmemb("X2.txt",x2,0,table_size-1);
+initial $readmemb("X3.txt",x3,0,table_size-1);
+
+wire [14:0] xx1, xx2, xx3;
+assign xx1={3'b0,in,4'b0}+16'b001001011010000;		//xx1=2*in+602; 		// 602= '001001011010'
+assign xx2={4'b0100,x2[in],3'b0};   						//xx2=x2[in]+1024;	// {3'b0,x2[in]}+1024;
+assign xx3={2'b01,x3[in],5'b10000};  					//xx3=4*x3[in]+1026; // {1'b0,x3[in],2'b0}+1026;
+//wire signed [15:0] diff1, diff2, diff3;
+//assign diff1=xx1-triangle;
+//assign diff2=triangle-xx2;
+//assign diff3=xx3-triangle;
+reg [1:0] S;  // S[0]=1 generates a pulse, S[0]=0 no pulse. S[1] indicates positive or negative pulse.
+always @(posedge clk100MHz)  begin     
+//    sum <= down? (count-delta) : (count+delta);		
+// 	 if(sum[28]==0)  
+//	       count <= sum;
+//	 else  begin
+//	       status <= status+1;
+//		    count <=~(sum-1);
+//	 end
+	 S[0]<= diff3[14]|(diff1[14] & diff2[14]);//(triangle>xx3)||((xx2>triangle)&&(triangle>xx1));// //
+	 S[1]<= positive_cycle;  
+end
+assign pwm_drive[0]=&S;        // out = 10  positive pulse; 00 no pulse; 01 negative pulse
+assign pwm_drive[1]=(~S[1])&S[0];
+
+
+
+endmodule 
