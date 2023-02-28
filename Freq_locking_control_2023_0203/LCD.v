@@ -1,4 +1,7 @@
-module LCD(clk50M,out0,out0_1,out1,out1_1,out2,out2_1,out3,out3_1,cs_n,cs_n1,out_clk,out_clk_1O5MHz,position_out,INT,PD,botton,botton_out,botton2,sweep,run,OFF,LOCK,freq_cho,current,current_flag,clk20MHz,TX_choose,power);
+module LCD(clk50M,out0,out0_1,out1,out1_1,out2,out2_1,out3,out3_1,cs_n,cs_n1,out_clk,out_clk_1O5MHz
+				,position_out,INT,PD,botton,botton_out,botton2,sweep,run,OFF,LOCK,freq_cho,current
+				,current_flag,clk20MHz,TX_choose,power,max_channal,sweep_flag);
+				
 input clk50M,clk20MHz;
 input [10:0]current;
 inout reg out0=0,out1=0,out2=0,out3=0;
@@ -7,8 +10,8 @@ output cs_n1,position_out,botton_out,sweep,run,OFF,LOCK;
 output reg[3:0]freq_cho;
 inout out0_1,out1_1,out2_1,out3_1;
 input [5:0]TX_choose;
-
-
+input [5:0]max_channal;
+input sweep_flag;
 
 reg sweep,run,OFF,LOCK;
 
@@ -112,7 +115,8 @@ always @(negedge clk50M)begin
 	if(current_flag==1'b1)
 	begin 
 		read_current<=current;
-		map_current<={4'd0,11'd320-((read_current-11'd256)+((read_current-11'd256)>>4)+11'd60)};	
+//		map_current<={4'd0,11'd320-((read_current-11'd256)+((read_current-11'd256)>>5)+11'd60)};	
+		map_current<={4'd0,11'd460-((read_current<<1)+read_current)};
 	end
 	
 	else begin
@@ -151,6 +155,8 @@ reg [1:0]SWEEP_choice=2'd0;
 reg rest_RUN=1'd0;
 reg rest_SWEEP=1'd0;
 reg rest_fre=1'd0;
+
+reg max_channal_chose;
 
 output reg [2:0]power=1'd0;
 
@@ -241,7 +247,7 @@ always @(negedge clk_1O5MHz) begin
 		begin run<=1'd0;OFF<=1'd0;sweep<=1'd0;LOCK<=1'd0;freq_cho<=4'd0;choice<=choice;RUN_choice<=RUN_choice;SWEEP_choice<=SWEEP_choice;rest_RUN<=rest_RUN;rest_SWEEP<=rest_SWEEP;rest_fre<=(!rest_fre)?1'd1:rest_fre;power<=3'd4;end
 	
 	else
-		begin run<=1'd0;OFF<=1'd0;sweep<=1'd0;LOCK<=1'd0;freq_cho<=4'd0;choice<=choice;RUN_choice<=RUN_choice;SWEEP_choice<=SWEEP_choice;rest_RUN<=rest_RUN;rest_SWEEP<=rest_SWEEP;rest_fre<=(!rest_fre)?1'd1:rest_fre;power<=power;end  
+		begin run<=1'd0;OFF<=1'd0;sweep<=1'd0;LOCK<=1'd0;freq_cho<=4'd0;choice<=(TX_choose==6'd14&&sweep_flag)?max_channal-6'd2:choice;RUN_choice<=RUN_choice;SWEEP_choice<=SWEEP_choice;rest_RUN<=rest_RUN;rest_SWEEP<=rest_SWEEP;rest_fre<=(!rest_fre)?1'd1:rest_fre;power<=power;end  
 	
 	
 	
@@ -249,15 +255,7 @@ always @(negedge clk_1O5MHz) begin
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 	
 	

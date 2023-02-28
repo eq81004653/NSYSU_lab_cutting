@@ -472,7 +472,11 @@ reg[10:0]max_current=11'd0;
 always@(negedge clk20MHz) 
 begin
 	
-	if((smooth_current>=max_current)&&current_chang&&TX_choose>=6'd3)begin
+	sec_on<=((OFF&&(LCD_begin_count==10'd27))||TX_choose==6'd14)?1'd0:((run==1'd1)&&(LCD_begin_count==10'd27))?1'd1:sec_on;
+	
+	
+	
+	if((smooth_current>=max_current)&&current_chang&&TX_choose>=6'd3&&TX_choose<=6'd13)begin
 		max_channal<=TX_choose;
 		max_current<=smooth_current;
 		TX_data_MAX<=TX_data;
@@ -527,37 +531,37 @@ begin
 	else if(LCD_LOCK==1'b1)	begin	sweep<=1'b0;run<=1'b0;OFF<=1'b0;LOCK<=1'b1;freq_cho<=4'd0;TX_choose<=6'd26;end
 	
 	/////////////////30k///////////////////////////////////	
-	else if(LCD_freq_cho==4'd1)	begin	sweep<=1'b0;run<=1'b1;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd3;TX_choose<=6'd3;end
+	else if(LCD_freq_cho==4'd1)	begin	sweep<=1'b0;run<=1'b0;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd3;TX_choose<=6'd3;end
 	
 	/////////////////31k///////////////////////////////////	
-	else if(LCD_freq_cho==4'd2)	begin	sweep<=1'b0;run<=1'b1;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd16;TX_choose<=6'd4;end
+	else if(LCD_freq_cho==4'd2)	begin	sweep<=1'b0;run<=1'b0;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd4;TX_choose<=6'd4;end
 	
 	/////////////////32k///////////////////////////////////
-	else if(LCD_freq_cho==4'd3)	begin	sweep<=1'b0;run<=1'b1;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd5;TX_choose<=6'd5;end
+	else if(LCD_freq_cho==4'd3)	begin	sweep<=1'b0;run<=1'b0;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd5;TX_choose<=6'd5;end
 	
 	/////////////////33k///////////////////////////////////	
-	else if(LCD_freq_cho==4'd4)	begin	sweep<=1'b0;run<=1'b1;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd6;TX_choose<=6'd6;end
+	else if(LCD_freq_cho==4'd4)	begin	sweep<=1'b0;run<=1'b0;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd6;TX_choose<=6'd6;end
 	
 	/////////////////34k///////////////////////////////////	
-	else if(LCD_freq_cho==4'd5)	begin	sweep<=1'b0;run<=1'b1;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd7;TX_choose<=6'd7;end
+	else if(LCD_freq_cho==4'd5)	begin	sweep<=1'b0;run<=1'b0;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd7;TX_choose<=6'd7;end
 	
 	/////////////////35k///////////////////////////////////	
-	else if(LCD_freq_cho==4'd6)	begin	sweep<=1'b0;run<=1'b1;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd8;TX_choose<=6'd8;end
+	else if(LCD_freq_cho==4'd6)	begin	sweep<=1'b0;run<=1'b0;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd8;TX_choose<=6'd8;end
 	
 	/////////////////36k///////////////////////////////////	
-	else if(LCD_freq_cho==4'd7)	begin	sweep<=1'b0;run<=1'b1;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd9;TX_choose<=6'd9;end
+	else if(LCD_freq_cho==4'd7)	begin	sweep<=1'b0;run<=1'b0;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd9;TX_choose<=6'd9;end
 	
 	/////////////////37k///////////////////////////////////
-	else if(LCD_freq_cho==4'd8)	begin	sweep<=1'b0;run<=1'b1;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd10;TX_choose<=6'd10;end
+	else if(LCD_freq_cho==4'd8)	begin	sweep<=1'b0;run<=1'b0;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd10;TX_choose<=6'd10;end
 	
 	/////////////////38k///////////////////////////////////	
-	else if(LCD_freq_cho==4'd9)	begin	sweep<=1'b0;run<=1'b1;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd11;TX_choose<=6'd11;end
+	else if(LCD_freq_cho==4'd9)	begin	sweep<=1'b0;run<=1'b0;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd11;TX_choose<=6'd11;end
 	
 	/////////////////39k///////////////////////////////////	
-	else if(LCD_freq_cho==4'd10)	begin	sweep<=1'b0;run<=1'b1;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd12;TX_choose<=6'd12;end
+	else if(LCD_freq_cho==4'd10)	begin	sweep<=1'b0;run<=1'b0;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd12;TX_choose<=6'd12;end
 	
 	/////////////////40k///////////////////////////////////	
-	else if(LCD_freq_cho==4'd11)	begin	sweep<=1'b0;run<=1'b1;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd13;TX_choose<=6'd13;end
+	else if(LCD_freq_cho==4'd11)	begin	sweep<=1'b0;run<=1'b0;OFF<=1'b0;LOCK<=1'b0;freq_cho<=4'd13;TX_choose<=6'd13;end
 	
 	
 	else 
@@ -573,7 +577,7 @@ reg botton_count;
 reg SW2_delay;
 reg delay_reset_chang;
 reg [9:0]delay_reset_count=9'd0;
-
+reg sec_on=1'd1;
 
 
 //always@(posedge clk50MHz) 
@@ -605,9 +609,7 @@ begin
 	delay_reset_count<=(reset==1'd1)?(delay_reset_count<=9'd30)?delay_reset_count+10'd1:delay_reset_count:10'd0;
 	delay_reset_chang<=(delay_reset_count>=9'd30)?1'd1:1'd0;
 	
-	
-	
-	
+
 	
 //	LCD_lock_count<=(LOCK==1'b1&&LCD_lock_count<=10'd50)?LCD_lock_count+10'd1:10'd0;
 //	LCD_lock<=(LOCK==1'b1&&LCD_begin_count<=10'd27)?1'd1:1'd0;
@@ -674,13 +676,13 @@ begin
 			TX<=TX_data[TX_count_bit];
 		end
 		
-		pwm_in_chang<=(TX)?(sweep)?8'd130:(power==3'd4)?8'd87:(power==3'd3)?8'd100:(power==3'd2)?8'd115:(power==3'd1)?8'd130:8'd145:8'd170;
+		pwm_in_chang<=(TX)?(sweep)?8'd133:(sec_on==1'd0)?8'd140:(power==3'd4)?8'd130:(power==3'd3)?8'd133:(power==3'd2)?8'd137:(power==3'd1)?8'd140:8'd142:8'd160;
 		
 	end
 	else
 	begin
 		TX<=1;
-		pwm_in_chang<=(sweep)?8'd130:(power==3'd4)?8'd87:(power==3'd3)?8'd100:(power==3'd2)?8'd115:(power==3'd1)?8'd130:8'd145;
+		pwm_in_chang<=(sweep)?8'd133:(sec_on==1'd0)?8'd140:(power==3'd4)?8'd130:(power==3'd3)?8'd133:(power==3'd2)?8'd137:(power==3'd1)?8'd142:8'd145;
 		TX_count_bit<=20'b0;
 	end
 	
@@ -791,7 +793,8 @@ wire [2:0]power;
 LCD LCD1(.clk50M(clk50MHz),.clk20MHz(clk20MHz),
 			.out0(LCD_out0),.out1(LCD_out1),.out2(LCD_out2),.out3(LCD_out3),
 			.cs_n(LCD_csn),.out_clk(LCD_clk),.INT(LCD_INT),.PD(LCD_PD),
-			.sweep(LCD_sweep),.LOCK(LCD_LOCK),.run(LCD_run),.OFF(LCD_OFF),.freq_cho(LCD_freq_cho),.current_flag(current_chang),.current(smooth_current),.TX_choose(TX_choose),.power(power));
+			.sweep(LCD_sweep),.LOCK(LCD_LOCK),.run(LCD_run),.OFF(LCD_OFF),.freq_cho(LCD_freq_cho),.current_flag(current_chang),.current(smooth_current),.TX_choose(TX_choose),
+			.power(power),.max_channal(max_channal),.sweep_flag(sweep));
 
 
 
