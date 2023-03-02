@@ -116,7 +116,7 @@ always @(negedge clk50M)begin
 	begin 
 		read_current<=current;
 //		map_current<={4'd0,11'd320-((read_current-11'd256)+((read_current-11'd256)>>5)+11'd60)};	
-		map_current<={4'd0,11'd460-((read_current<<1)+read_current)};
+		map_current<={4'd0,11'd600-((read_current<<1)+read_current)};
 	end
 	
 	else begin

@@ -176,14 +176,6 @@
 					"strict" : false
 				},
 				{
-					"name" : "max_channal[4]",
-					"strict" : false
-				},
-				{
-					"name" : "max_channal[5]",
-					"strict" : false
-				},
-				{
 					"name" : "LCD_out0",
 					"strict" : false
 				},

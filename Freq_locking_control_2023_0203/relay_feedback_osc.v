@@ -159,7 +159,7 @@ reg[12:0] current_avg;	//average of 64 Io
 reg[18:0] current_cum;
 reg[5:0] current_count;
 
-always@(posedge cycle)
+always@(posedge count[6])
 begin
 	current_count<=current_count+1'b1;
 	if(current_count==6'b111111)
