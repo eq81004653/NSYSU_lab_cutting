@@ -676,13 +676,13 @@ begin
 			TX<=TX_data[TX_count_bit];
 		end
 		
-		pwm_in_chang<=(TX)?(sweep)?8'd125:(sec_on==1'd0)?8'd145:(power==3'd4)?8'd100:(power==3'd3)?8'd120:(power==3'd2)?8'd130:(power==3'd1)?8'd135:8'd145:8'd150;
+		pwm_in_chang<=(TX)?(sweep)?8'd125:(sec_on==1'd0)?8'd145:(power==3'd4)?8'd110:(power==3'd3)?8'd120:(power==3'd2)?8'd130:(power==3'd1)?8'd135:8'd145:8'd150;
 		
 	end
 	else
 	begin
 		TX<=1;
-		pwm_in_chang<=(sweep)?8'd125:(sec_on==1'd0)?8'd145:(power==3'd4)?8'd100:(power==3'd3)?8'd120:(power==3'd2)?8'd130:(power==3'd1)?8'd135:8'd145;
+		pwm_in_chang<=(sweep)?8'd125:(sec_on==1'd0)?8'd145:(power==3'd4)?8'd110:(power==3'd3)?8'd120:(power==3'd2)?8'd130:(power==3'd1)?8'd135:8'd145;
 		TX_count_bit<=20'b0;
 	end
 	
