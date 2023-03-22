@@ -156,7 +156,7 @@ wire[12:0] current_abs;
 assign current_abs=(Io_1d25[12])?((~Io_1d25)+1'b1):Io_1d25;
 
 reg[12:0] current_avg;	//average of 64 Io
-reg[18:0] current_cum;
+reg[19:0] current_cum;
 reg[5:0] current_count;
 
 always@(posedge count[6])
@@ -165,7 +165,7 @@ begin
 	if(current_count==6'b111111)
 	begin
 		current_avg<=current_cum[18:6];
-		current_cum<=19'b0;
+		current_cum<=20'b0;
 	end
 	else
 	begin
@@ -676,13 +676,13 @@ begin
 			TX<=TX_data[TX_count_bit];
 		end
 		
-		pwm_in_chang<=(TX)?(sweep)?8'd133:(sec_on==1'd0)?8'd140:(power==3'd4)?8'd130:(power==3'd3)?8'd133:(power==3'd2)?8'd137:(power==3'd1)?8'd140:8'd142:8'd160;
+		pwm_in_chang<=(TX)?(sweep)?8'd125:(sec_on==1'd0)?8'd145:(power==3'd4)?8'd100:(power==3'd3)?8'd120:(power==3'd2)?8'd130:(power==3'd1)?8'd135:8'd145:8'd150;
 		
 	end
 	else
 	begin
 		TX<=1;
-		pwm_in_chang<=(sweep)?8'd133:(sec_on==1'd0)?8'd140:(power==3'd4)?8'd130:(power==3'd3)?8'd133:(power==3'd2)?8'd137:(power==3'd1)?8'd142:8'd145;
+		pwm_in_chang<=(sweep)?8'd125:(sec_on==1'd0)?8'd145:(power==3'd4)?8'd100:(power==3'd3)?8'd120:(power==3'd2)?8'd130:(power==3'd1)?8'd135:8'd145;
 		TX_count_bit<=20'b0;
 	end
 	

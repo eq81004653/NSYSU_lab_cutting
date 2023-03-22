@@ -1,4 +1,4 @@
-module LCD(clk50M,out0,out0_1,out1,out1_1,out2,out2_1,out3,out3_1,cs_n,cs_n1,out_clk,out_clk_1O5MHz
+ module LCD(clk50M,out0,out0_1,out1,out1_1,out2,out2_1,out3,out3_1,cs_n,cs_n1,out_clk,out_clk_1O5MHz
 				,position_out,INT,PD,botton,botton_out,botton2,sweep,run,OFF,LOCK,freq_cho,current
 				,current_flag,clk20MHz,TX_choose,power,max_channal,sweep_flag);
 				
@@ -115,8 +115,8 @@ always @(negedge clk50M)begin
 	if(current_flag==1'b1)
 	begin 
 		read_current<=current;
-//		map_current<={4'd0,11'd320-((read_current-11'd256)+((read_current-11'd256)>>5)+11'd60)};	
-		map_current<={4'd0,11'd600-((read_current<<1)+read_current)};
+		map_current<={4'd0,11'd320-((read_current-11'd256)+((read_current-11'd256)>>5)+11'd60)};	
+//		map_current<={4'd0,11'd600-((read_current<<1)+read_current)};
 	end
 	
 	else begin
